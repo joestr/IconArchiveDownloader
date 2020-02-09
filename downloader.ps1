@@ -1,4 +1,4 @@
-$masterURI = "http://www.iconarchive.com/show/papirus-apps-icons-by-papirus-team.%uriplaceholder%.html“
+$masterURI = "http://www.iconarchive.com/show/papirus-apps-icons-by-papirus-team.%uriplaceholder%.html"
 $URIS = 5..29
 $maxpiccount = 50
 $maxsinglepiccount = 4;
