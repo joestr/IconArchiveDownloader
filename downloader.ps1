@@ -1,34 +1,46 @@
-$masterURI = "http://www.iconarchive.com/show/papirus-apps-icons-by-papirus-team.%uriplaceholder%.html"
-$URIS = 5..29
-$maxpiccount = 50
-$maxsinglepiccount = 4;
+$mainUri = "http://www.iconarchive.com/show/papirus-apps-icons-by-papirus-team.%page%.html"
+$pageRange = 5..29
+$iconsPerPage = 50
+$filesPerIcon = 4;
 
+$pageRange | ForEach-Object {
 
-$URIS | ForEach-Object {
-    $URI = $masterURI -replace '%uriplaceholder%',$_
-    $HTML = Invoke-WebRequest -Uri $URI
-    $piccount = 1
-    $singlepiccount = 1
-    $currenturi = $_
-    (
+    $currentPage = $_
+
+    # Replace %current_page% with the current page.
+    $currentUri = $mainUri -replace '%page%',$currentPage
+
+    # Get the HTML of the page.
+    $currentPage = Invoke-WebRequest -Uri $currentUri
+
+    $iconCounter = 1
+    $fileCounter = 1
+    
+    $links = (
         $HTML.ParsedHtml.getElementsByTagName('a') |
         Where-Object {
             $_.href -match "^about:/download/" -or
             $_.href -match "^http://icons.iconarchive.com"
         }
-    ) | ForEach-Object {
-       
-        Write-Host "Currently on page $currenturi/$($URIS.Count) and icon $piccount/$($maxpiccount): $(([string]($_.href) -split '/').Get(([string]($_.href) -split '/').Count -1))"
+    )
+    
+    $links | ForEach-Object {
+
+        $downloadUri = ([string]($_.href) -replace "about:","http://www.iconarchive.com")
+        $fileName = (([string]($_.href) -split '/').Get(([string]($_.href) -split '/').Count -1))
+
+        Write-Host "Currently on page $currentPage/$($pageRange.Count) and icon $iconCounter/$($iconsPerPage): $(([string]($_.href) -split '/').Get(([string]($_.href) -split '/').Count -1))"
         
-        Invoke-WebRequest `
-        -Uri ([string]($_.href) -replace "about:","http://www.iconarchive.com") `
-        -OutFile (([string]($_.href) -split '/').Get(([string]($_.href) -split '/').Count -1))
+        Invoke-WebRequest -Uri $downloadUri `-OutFile $fileName
 
-        $singlepiccount = $singlepiccount + 1;
+        # Icrement the file counter.
+        $fileCounter = $fileCounter + 1;
 
-        if(($singlepiccount-1) -eq $maxsinglepiccount) {
-            $singlepiccount = 1
-            $piccount = $piccount + 1
+        if(($fileCounter - 1) -eq $filesPerIcon) {
+            # Reset the file counter.
+            $fileCounter = 1
+            # Increment the icon counter.
+            $iconCounter = $iconCounter + 1
         }
     }
 }
