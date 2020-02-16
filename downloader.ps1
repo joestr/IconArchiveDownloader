@@ -1,7 +1,7 @@
 $mainUri = "http://www.iconarchive.com/show/papirus-apps-icons-by-papirus-team.%page%.html"
 $pageRange = 5..29
 $iconsPerPage = 50
-$filesPerIcon = 4;
+$filesPerIcon = 4
 
 $pageRange | ForEach-Object {
 
@@ -27,7 +27,8 @@ $pageRange | ForEach-Object {
     $links | ForEach-Object {
 
         $downloadUri = ([string]($_.href) -replace "about:","http://www.iconarchive.com")
-        $fileName = (([string]($_.href) -split '/').Get(([string]($_.href) -split '/').Count -1))
+        $splittedUri = [string]($_.href) -split '/'
+        $fileName = $splittedUri.Get($splittedUri.Count - 1)
 
         Write-Host "Currently on page $currentPage/$($pageRange.Count) and icon $iconCounter/$($iconsPerPage): $(([string]($_.href) -split '/').Get(([string]($_.href) -split '/').Count -1))"
         
