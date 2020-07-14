@@ -1,5 +1,5 @@
 $mainUri = "http://www.iconarchive.com/show/papirus-apps-icons-by-papirus-team.%page%.html"
-$pageRange = 5..29
+$pageRange = 1..29
 $iconsPerPage = 50
 $filesPerIcon = 4
 
@@ -11,17 +11,17 @@ $pageRange | ForEach-Object {
     $currentUri = $mainUri -replace '%page%',$currentPage
 
     # Get the HTML of the page.
-    $currentPage = Invoke-WebRequest -Uri $currentUri
+    $currentPageHtml = Invoke-WebRequest -Uri $currentUri
 
     # Set counters
     $iconCounter = 1
     $fileCounter = 1
     
     $links = (
-        $currentPage.ParsedHtml.getElementsByTagName('a') |
+        $currentPageHtml.ParsedHtml.getElementsByTagName('a') |
         Where-Object {
             $_.href -match "^about:/download/" -or
-            $_.href -match "^http://icons.iconarchive.com"
+            $_.href -match "^https://icons.iconarchive.com"
         }
     )
     
