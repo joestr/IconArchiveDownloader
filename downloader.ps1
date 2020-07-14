@@ -18,7 +18,7 @@ $pageRange | ForEach-Object {
     $fileCounter = 1
     
     $links = (
-        $HTML.ParsedHtml.getElementsByTagName('a') |
+        $currentPage.ParsedHtml.getElementsByTagName('a') |
         Where-Object {
             $_.href -match "^about:/download/" -or
             $_.href -match "^http://icons.iconarchive.com"
